@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Service</title>
+</head>
+<body>
+<h1 style="text-align: center;color: blue;">Service</h1>
+<h2 style="text-align: center;">Waiting: <span id="waiting">0</span></h2>
+<input id="message" type="text">
+<button id="send">send</button>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var serverAddress = "localhost";
+    var serverPort = 80;
+
+    function socket(token) {
+        //Determine whether the current browser supports WebSocket
+        if ('WebSocket' in window) {
+            var ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/service/" + token);
+            var waiting = null;
+            //Connect failed callback
+            ws.onerror = function () {
+                alert("error")
+            };
+            //Connect succeed callback
+            ws.onopen = function () {
+                alert("open")
+            }
+            //Receive message callback
+            ws.onmessage = function (event) {
+                var json = JSON.parse(event.data);
+                if (waiting == null) {
+                    waiting = json.customerInQueue;
+                }
+                switch (json.type) {
+                    case "MESSAGE":
+                        alert("游客    " + json.time + "\n" + json.message)
+                        break;
+                    case "FORWARD":
+                        if (waiting != 0) {
+                            $("#waiting").text(--waiting);
+                        }
+                        break;
+                    case "START_SERVICE":
+                        alert("已接入新的服务\n");
+                        if (waiting != 0) {
+                            $("#waiting").text(--waiting);
+                        }
+                        break;
+                    case "WAIT_SERVICE":
+                        $("#waiting").text(++waiting);
+                        break;
+                }
+            }
+            //Connect closed callback
+            ws.onclose = function () {
+                alert("close")
+            }
+            //Close the websocket connection when the window is closed, preventing throwing exceptions.
+            window.onbeforeunload = function () {
+                ws.close();
+            }
+            //Send message
+            $('#send').click(function () {
+                if ($('#message').val() != '') {
+                    ws.send($('#message').val());
+                    $('#message').val("");
+                }
+            });
+        } else {
+            alert('Your browser does not support WebSocket. Please change your browser and try again.');
+        }
+    }
+
+    $(function () {
+        $.ajax({
+            url: "/service/login",
+            data: '{"username": "test", "password": "123456"}',
+            contentType: "application/json",
+            type: "post",
+            success: function (token) {
+                if (token != "") {
+                    socket(token);
+                }
+            }
+        });
+    });
+</script>
+</html>

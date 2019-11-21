@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer</title>
+</head>
+<body>
+<h1 style="text-align: center;color: green;">Customer</h1>
+<h2 style="text-align: center;">Before you: <span id="waitingBeforeYou">0</span></h2>
+<input id="message" type="text">
+<button id="send">send</button>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var serverAddress = "localhost";
+    var serverPort = 80;
+
+    function socket() {
+        //Determine whether the current browser supports WebSocket
+        if ('WebSocket' in window) {
+            var ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/customer");
+            var before = null;
+            //Connect failed callback
+            ws.onerror = function () {
+                alert("error")
+            };
+            //Connect succeed callback
+            ws.onopen = function () {
+                alert("open")
+            }
+            //Receive message callback
+            ws.onmessage = function (event) {
+                var json = JSON.parse(event.data);
+                /*if (json.message != null) {
+                    alert(json.message)
+                }*/
+                if (before == null) {
+                    before = json.customerInQueue;
+                }
+                switch (json.type) {
+                    case "MESSAGE":
+                        alert(json.serviceName + "    " + json.time + "\n" + json.message)
+                        break;
+                    case "FORWARD":
+                        if (before != 0) {
+                            $("#waitingBeforeYou").text(--before);
+                        }
+                        break;
+                    case "START_SERVICE":
+                        alert("已接入服务\n" + json.serviceName + "    " + json.time + "\n" + json.message);
+                        before = 0;
+                        $("#waitingBeforeYou").text(0);
+                        break;
+                    case "WAIT_SERVICE":
+                        $("#waitingBeforeYou").text(json.customerInQueue);
+                        break;
+                    case "SERVICE_DOWN":
+                        alert("客服已掉线");
+                }
+            }
+            //Connect closed callback
+            ws.onclose = function () {
+                alert("close")
+            }
+            //Close the websocket connection when the window is closed, preventing throwing exceptions.
+            window.onbeforeunload = function () {
+                ws.close();
+            }
+            //Send message
+            $('#send').click(function () {
+                if ($('#message').val() != '') {
+                    ws.send($('#message').val());
+                    $('#message').val("");
+                }
+            });
+        } else {
+            alert('Your browser does not support WebSocket. Please change your browser and try again.');
+        }
+    }
+
+    $(function () {
+        socket();
+    });
+</script>
+</html>
