@@ -1,0 +1,8 @@
+server:
+  port: 80
+coco:
+  max-customer-per-service: 2
+  welcome: 您好，请问您需要咨询什么问题？
+  auto-reply-after-work: 客服下班了，您可以留下咨询的问题及联系方式，客服上班时会回复您
+  unified-service-name: ABC Company
+  always-display-unified-service-name: false
