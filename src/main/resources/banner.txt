@@ -1,0 +1,8 @@
+${AnsiColor.BLUE}    coco
+${AnsiColor.BLUE}  co    co
+${AnsiColor.BLUE} co
+${AnsiColor.BLUE}co            co     co     co
+${AnsiColor.BLUE} co         co  co  c  c  co  co
+${AnsiColor.BLUE}  co    co  co  co  c     co  co
+${AnsiColor.BLUE}    coco      co     co     co
+${AnsiColor.GREEN} :: Coco ::   ${application.formatted-version}
