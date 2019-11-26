@@ -3,30 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Customer</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <h1 style="text-align: center;color: green;">Customer</h1>
 <h2 style="text-align: center;">Before you: <span id="waitingBeforeYou">0</span></h2>
-<input id="message" type="text">
-<button id="send">send</button>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-xl-4"></div>
+        <div class="col-xl-4">
+            <div class="chatarea border rounded border-dark bg-white p-2" id="chatarea"
+                 style="word-wrap: break-word;overflow-y: auto;">
+            </div>
+            <div class="input-group mb-3 bg-white">
+                <input autofocus="autofocus" class="form-control" id="message" maxlength="30"
+                       placeholder="Say something(within 30 chars)"
+                       type="text">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-info" id="send" type="button">Send</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4"></div>
+    </div>
+</div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="js/coco.js"></script>
 <script type="text/javascript">
     var serverAddress = "localhost";
     var serverPort = 80;
+    var id = "unknown";
 
     function socket() {
         //Determine whether the current browser supports WebSocket
         if ('WebSocket' in window) {
-            var ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/customer");
+            var ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/customer/" + id);
             var before = null;
             //Connect failed callback
             ws.onerror = function () {
-                alert("error")
+                $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
             };
             //Connect succeed callback
             ws.onopen = function () {
-                alert("open")
+                $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
             }
             //Receive message callback
             ws.onmessage = function (event) {
@@ -39,7 +60,9 @@
                 }
                 switch (json.type) {
                     case "MESSAGE":
-                        alert(json.serviceName + "    " + json.time + "\n" + json.message)
+                        $('#chatarea').append('<p class="text-left"><small class="bg-light">'
+                            + json.serviceName + '&nbsp;' + getTime() + '</small><br>'
+                            + json.message + '</p>');
                         break;
                     case "FORWARD":
                         if (before != 0) {
@@ -47,7 +70,9 @@
                         }
                         break;
                     case "START_SERVICE":
-                        alert("已接入服务\n" + json.serviceName + "    " + json.time + "\n" + json.message);
+                        $('#chatarea').append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>')
+                            .append('<p><small class="bg-light">' + json.serviceName + '&nbsp;' + getTime() + '</small><br>'
+                                + json.message + '</p>');
                         before = 0;
                         $("#waitingBeforeYou").text(0);
                         break;
@@ -57,10 +82,12 @@
                     case "SERVICE_DOWN":
                         alert("客服已掉线");
                 }
+                var scrollHeight = $('#chatarea').prop('scrollHeight');
+                $('#chatarea').scrollTop(scrollHeight);
             }
             //Connect closed callback
             ws.onclose = function () {
-                alert("close")
+                $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
             }
             //Close the websocket connection when the window is closed, preventing throwing exceptions.
             window.onbeforeunload = function () {
@@ -68,10 +95,14 @@
             }
             //Send message
             $('#send').click(function () {
-                if ($('#message').val() != '') {
-                    ws.send($('#message').val());
-                    $('#message').val("");
+                var message = $('#message').val();
+                if (message != '') {
+                    ws.send(message);
+                    $('#chatarea').append('<p class="text-right"><span class="bg-light" ">' + getTime() + '</span><br>' + message + '</p>');
+                    $('#message').val('').focus();
                 }
+                var scrollHeight = $('#chatarea').prop('scrollHeight');
+                $('#chatarea').scrollTop(scrollHeight);
             });
         } else {
             alert('Your browser does not support WebSocket. Please change your browser and try again.');
@@ -79,7 +110,14 @@
     }
 
     $(function () {
-        socket();
+        $.ajax({
+            url: "/customer",
+            type: "get",
+            success: function (result) {
+                id = result;
+                socket();
+            }
+        });
     });
 </script>
 </html>

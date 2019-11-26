@@ -3,17 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <title>Service</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <h1 style="text-align: center;color: blue;">Service</h1>
 <h2 style="text-align: center;">Waiting: <span id="waiting">0</span></h2>
-<input id="message" type="text">
-<button id="send">send</button>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body shadow-lg p-3 bg-white rounded">
+                    <div class="row">
+                        <div class="col-lg-4 pr-0">
+                            <div class="list-group" id="list-tab" role="tablist">
+                                <a class="rounded-pill list-group-item list-group-item-action active text-center" data-toggle="list" href="#statistics" role="tab">Statistics</a>
+                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog1" role="tab">CUST 1<span class="badge badge-warning badge-pill">4</span></a>
+                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog2" role="tab">CUST 2<span class="badge badge-warning badge-pill">5</span></a>
+                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog3" role="tab">CUST 3<span class="badge badge-warning badge-pill">1</span></a>
+                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog4" role="tab">CUST 4<span class="badge badge-danger badge-pill">NEW</span></a>
+                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog5" role="tab">CUST 5<span class="badge badge-danger badge-pill">NEW</span></a>
+                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog6" role="tab">CUST 6<span class="badge badge-danger badge-pill">NEW</span></a>
+                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog7" role="tab">CUST 7<span class="badge badge-danger badge-pill">NEW</span></a>
+                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog8" role="tab">CUST 8<span class="badge badge-danger badge-pill">NEW</span></a>
+                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog9" role="tab">CUST 9<span class="badge badge-danger badge-pill">NEW</span></a>
+                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog10" role="tab">CUST 10<span class="badge badge-warning badge-pill">NEW</span></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 pl-0">
+                            <div class="tab-content" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="statistics" role="tabpanel">
+                                    <div class="alert alert-success" role="alert">
+                                        Today Served: <strong>12</strong>
+                                    </div>
+                                    <div class="alert alert-success" role="alert">
+                                        Today Online: <strong>1h2m3s</strong>
+                                    </div>
+                                    <div class="alert alert-success" role="alert">
+                                        Today Score: <strong>4.5</strong>
+                                    </div>
+                                    <div class="alert alert-info" role="alert">
+                                        Total Served: <strong>12h12m12s</strong>
+                                    </div>
+                                    <div class="alert alert-info" role="alert">
+                                        Total Online: <strong>57</strong>
+                                    </div>
+                                    <div class="alert alert-info" role="alert">
+                                        Total Score: <strong>4.2</strong>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="dialog1" role="tabpanel">
+                                    <div class="border rounded bg-white p-2 chatarea"
+                                         style="word-wrap: break-word;overflow-y: auto;">
+                                    </div>
+                                    <div class="input-group mb-3 bg-white">
+                                        <input autofocus="autofocus" class="form-control message" maxlength="30"
+                                               placeholder="Say something(within 30 chars)"
+                                               type="text">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-primary send" type="button">Send</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3"></div>
+    </div>
+</div>
+<button id="login-form" style="display: none;" type="button" class="btn btn-primary" data-toggle="modal"
+        data-target="#exampleModalCenter">
+    Launch demo modal
+</button>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Service Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
+                               placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                            else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                    <button id="login" type="button" class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="js/coco.js"></script>
 <script type="text/javascript">
-    var serverAddress = "localhost";
-    var serverPort = 80;
+    const serverAddress = "localhost";
+    const serverPort = 80;
+    const customerIdSet = new Set();
 
     function socket(token) {
         //Determine whether the current browser supports WebSocket
@@ -22,21 +123,22 @@
             var waiting = null;
             //Connect failed callback
             ws.onerror = function () {
-                alert("error")
+                //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
             };
             //Connect succeed callback
             ws.onopen = function () {
-                alert("open")
+                //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
             }
             //Receive message callback
             ws.onmessage = function (event) {
-                var json = JSON.parse(event.data);
+                let json = JSON.parse(event.data);
                 if (waiting == null) {
                     waiting = json.customerInQueue;
                 }
+                let chatareaObject = $("#" + json.customerId).children(".chatarea");
                 switch (json.type) {
                     case "MESSAGE":
-                        alert("游客    " + json.time + "\n" + json.message)
+                        chatareaObject.append('<p class="text-left"><small class="bg-light">'+getTime()+'</small><br>' + json.message + '</p>');
                         break;
                     case "FORWARD":
                         if (waiting != 0) {
@@ -44,7 +146,24 @@
                         }
                         break;
                     case "START_SERVICE":
-                        alert("已接入新的服务\n");
+                        let customerId = json.customerId;
+                        customerIdSet.add(customerId);
+                        $(".list-group").append('<a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#'+json.customerId+'" role="tab">Customer '+customerIdSet.size+'<span class="badge badge-danger badge-pill">NEW</span></a>');
+                        $("#nav-tabContent").append('<div class="tab-pane fade" id="' + customerId + '" role="tabpanel">\n' +
+                            '                    <div id="chatarea_"' + customerId + '" class="border rounded border-secondary bg-white p-2 chatarea"\n' +
+                            '                         style="word-wrap: break-word;overflow-y: auto;">\n' +
+                            '                    </div>\n' +
+                            '                    <div class="input-group mb-3 bg-white">\n' +
+                            '                        <input id="message_'+customerId+'" autofocus="autofocus" class="form-control message" maxlength="30"\n' +
+                            '                               placeholder="Say something(within 30 chars)"\n' +
+                            '                               type="text">\n' +
+                            '                        <div class="input-group-append">\n' +
+                            '                            <button id="send_'+customerId+'" class="btn btn-outline-primary send" type="button">Send</button>\n' +
+                            '                        </div>\n' +
+                            '                    </div>\n' +
+                            '                </div>');
+                        chatareaObject.append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>');
+                        resize();
                         if (waiting != 0) {
                             $("#waiting").text(--waiting);
                         }
@@ -53,21 +172,31 @@
                         $("#waiting").text(++waiting);
                         break;
                 }
+                let scrollHeight = chatareaObject.prop('scrollHeight');
+                chatareaObject.scrollTop(scrollHeight);
             }
             //Connect closed callback
             ws.onclose = function () {
-                alert("close")
+                //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
             }
             //Close the websocket connection when the window is closed, preventing throwing exceptions.
             window.onbeforeunload = function () {
                 ws.close();
             }
             //Send message
-            $('#send').click(function () {
-                if ($('#message').val() != '') {
-                    ws.send($('#message').val());
-                    $('#message').val("");
+            $('.send').click(function () {
+                alert($(this).attr("id"))
+                let customerId = ($(this).attr("id").split("_"))[1];
+                // alert(customerId)
+                let message = $(this).parent().prev(".message");
+                if (message != '') {
+                    let msg = {"customerId": customerId, "message": message.val()};
+                    ws.send(JSON.stringify(msg));
+                    $("#" + customerId).children('.chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
+                    message.val('').focus();
                 }
+                var scrollHeight = $('.chatarea').prop('scrollHeight');
+                $('.chatarea').scrollTop(scrollHeight);
             });
         } else {
             alert('Your browser does not support WebSocket. Please change your browser and try again.');
@@ -75,16 +204,21 @@
     }
 
     $(function () {
-        $.ajax({
-            url: "/service/login",
-            data: '{"username": "test", "password": "123456"}',
-            contentType: "application/json",
-            type: "post",
-            success: function (token) {
-                if (token != "") {
-                    socket(token);
+        $("#login-form").trigger("click");
+        $("#login").click(function () {
+            var email = $("#email").val();
+            var password = $("#password").val();
+            $.ajax({
+                url: "/service/login",
+                data: {"username": email, "password": password},
+                type: "post",
+                success: function (token) {
+                    if (token != "") {
+                        socket(token);
+                        $(".close").trigger("click");
+                    }
                 }
-            }
+            });
         });
     });
 </script>
