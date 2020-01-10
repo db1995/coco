@@ -1,5 +1,7 @@
 package com.github.coco;
 
+import com.alibaba.fastjson.JSON;
+import com.github.coco.pojo.AbstractResponseData;
 import com.github.coco.pojo.CustomerResponseData;
 import com.github.coco.pojo.ServiceResponseData;
 import com.github.coco.util.JSONEncoder;
@@ -25,6 +27,7 @@ import static com.github.coco.pojo.AbstractResponseData.Type;
 @Component
 public class CustomerConnection extends AbstractConnection {
     private ServiceConnection serviceConnection;
+
     @OnOpen
     @Override
     public synchronized void onOpen(Session session, @PathParam("id") String id) throws IOException, EncodeException {
@@ -32,7 +35,7 @@ public class CustomerConnection extends AbstractConnection {
         this.id = UUID.randomUUID().toString();
         this.session = session;
         session.setMaxIdleTimeout(600000);
-        CUSTOMER_MAP.put(id, this);
+        CUSTOMER_MAP.put(this.id, this);
 
         if (SERVICE_QUEUE.size() > 0) { // 如果有空闲的客服
             ServiceConnection serviceConnection = SERVICE_QUEUE.element();
@@ -70,59 +73,69 @@ public class CustomerConnection extends AbstractConnection {
 
     @OnClose
     @Override
-    public void onClose() throws IOException {
-        dealCloseAndError(session);
+    public void onClose() throws IOException, EncodeException {
+        dealCloseAndError();
     }
 
     @OnError
     @Override
-    public void onError(Throwable error, Session session) throws IOException {
+    public void onError(Throwable error, Session session) throws IOException, EncodeException {
         error.printStackTrace();
         if (error instanceof EOFException) {
 
         } else {
-            dealCloseAndError(session);
+            dealCloseAndError();
         }
     }
 
-    private void dealCloseAndError(Session session) throws IOException {
-        /*Customer oldCustomer = CUSTOMER_MAP.get(id);
-        if (CUSTOMER_QUEUE.contains(oldCustomer)) {
+    private void dealCloseAndError() throws IOException, EncodeException {
+        CustomerConnection cc = CUSTOMER_MAP.get(id);
+        if (CUSTOMER_QUEUE.contains(cc)) { // 某顾客离开时正在队列中，通知其之后的所有顾客前进一位
             CUSTOMER_QUEUE.forEach(c -> {
-                if (c.getCreateTime() > oldCustomer.getCreateTime()) {
+                if (c.getCreateTime() > cc.getCreateTime()) {
                     AbstractResponseData rd = new CustomerResponseData(Type.FORWARD);
                     try {
-                        c.getSession().getBasicRemote().sendText(JSON.toJSONString(rd));
+                        c.session.getBasicRemote().sendText(JSON.toJSONString(rd));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             });
-            CUSTOMER_QUEUE.remove(oldCustomer);
-        } else {
+            CUSTOMER_QUEUE.remove(cc);
+            AbstractResponseData rd = new CustomerResponseData(Type.FORWARD);
+            SERVICE_MAP.forEach((k, s) -> {
+                try {
+                    s.session.getBasicRemote().sendText(JSON.toJSONString(rd));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else { // 某顾客离开时正在处于被服务状态，通知其他所有等待队列中的顾客前进一位
             AbstractResponseData rd = new CustomerResponseData(Type.FORWARD);
             CUSTOMER_QUEUE.forEach(c -> {
                 try {
-                    c.getSession().getBasicRemote().sendText(JSON.toJSONString(rd));
+                    if (c != null && c.session != null) {
+                        c.session.getBasicRemote().sendText(JSON.toJSONString(rd));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
             SERVICE_MAP.forEach((k, s) -> {
                 try {
-                    s.getSession().getBasicRemote().sendText(JSON.toJSONString(rd));
+                    s.session.getBasicRemote().sendText(JSON.toJSONString(rd));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
             // 让客服接入新的客户
             if (CUSTOMER_QUEUE.size() > 0) {
-                Customer newCustomer = CUSTOMER_QUEUE.poll();
-                Service service = oldCustomer.getService();
-                if (service != null) {
-                    newCustomer.setService(service);
-                    service.getCustomerSet().add(newCustomer);
-                    startService(newCustomer, service);
+                CustomerConnection connection = CUSTOMER_QUEUE.poll();
+                ServiceConnection sc = connection.serviceConnection;
+                if (sc != null) {
+                    connection.serviceConnection = sc;
+                    sc.getCustomerConnectionMap().put(this.id, this);
+                    startService(connection, sc);
                 }
             }
         }
@@ -131,7 +144,12 @@ public class CustomerConnection extends AbstractConnection {
             session.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
+    }
+
+    private void startService(CustomerConnection cc, ServiceConnection sc) throws IOException, EncodeException {
+        sc.session.getBasicRemote().sendObject(new CustomerResponseData(Type.START_SERVICE, serviceConnection.getServiceName(), getWelcome()));
+        cc.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.START_SERVICE));
     }
 
     public void setServiceConnection(ServiceConnection serviceConnection) {

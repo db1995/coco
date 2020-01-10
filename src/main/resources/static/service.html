@@ -17,52 +17,31 @@
                     <div class="row">
                         <div class="col-lg-4 pr-0">
                             <div class="list-group" id="list-tab" role="tablist">
-                                <a class="rounded-pill list-group-item list-group-item-action active text-center" data-toggle="list" href="#statistics" role="tab">Statistics</a>
-                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog1" role="tab">CUST 1<span class="badge badge-warning badge-pill">4</span></a>
-                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog2" role="tab">CUST 2<span class="badge badge-warning badge-pill">5</span></a>
-                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog3" role="tab">CUST 3<span class="badge badge-warning badge-pill">1</span></a>
-                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog4" role="tab">CUST 4<span class="badge badge-danger badge-pill">NEW</span></a>
-                                <a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog5" role="tab">CUST 5<span class="badge badge-danger badge-pill">NEW</span></a>
-                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog6" role="tab">CUST 6<span class="badge badge-danger badge-pill">NEW</span></a>
-                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog7" role="tab">CUST 7<span class="badge badge-danger badge-pill">NEW</span></a>
-                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog8" role="tab">CUST 8<span class="badge badge-danger badge-pill">NEW</span></a>
-                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog9" role="tab">CUST 9<span class="badge badge-danger badge-pill">NEW</span></a>
-                                <a class="invisible rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#dialog10" role="tab">CUST 10<span class="badge badge-warning badge-pill">NEW</span></a>
+                                <a id="pill-statistics"
+                                   class="rounded-pill list-group-item list-group-item-action active text-center"
+                                   data-toggle="list" href="#statistics" role="tab">Statistics</a>
                             </div>
                         </div>
                         <div class="col-lg-8 pl-0">
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane fade show active" id="statistics" role="tabpanel">
+                                <div class="tab-pane active" id="statistics" role="tabpanel">
                                     <div class="alert alert-success" role="alert">
-                                        Today Served: <strong>12</strong>
-                                    </div>
-                                    <div class="alert alert-success" role="alert">
-                                        Today Online: <strong>1h2m3s</strong>
+                                        Today Served: <strong id="todayServed"></strong>
                                     </div>
                                     <div class="alert alert-success" role="alert">
-                                        Today Score: <strong>4.5</strong>
+                                        Today Online(min): <strong id="todayOnline"></strong>
+                                    </div>
+                                    <div class="alert alert-success" role="alert">
+                                        Today Score: <strong id="todayScore"></strong>
                                     </div>
                                     <div class="alert alert-info" role="alert">
-                                        Total Served: <strong>12h12m12s</strong>
+                                        Total Served: <strong id="totalServed"></strong>
                                     </div>
                                     <div class="alert alert-info" role="alert">
-                                        Total Online: <strong>57</strong>
+                                        Total Online(min): <strong id="totalOnline"></strong>
                                     </div>
                                     <div class="alert alert-info" role="alert">
-                                        Total Score: <strong>4.2</strong>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="dialog1" role="tabpanel">
-                                    <div class="border rounded bg-white p-2 chatarea"
-                                         style="word-wrap: break-word;overflow-y: auto;">
-                                    </div>
-                                    <div class="input-group mb-3 bg-white">
-                                        <input autofocus="autofocus" class="form-control message" maxlength="30"
-                                               placeholder="Say something(within 30 chars)"
-                                               type="text">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-primary send" type="button">Send</button>
-                                        </div>
+                                        Total Score: <strong id="totalScore"></strong>
                                     </div>
                                 </div>
                             </div>
@@ -111,115 +90,5 @@
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 <script src="js/coco.js"></script>
-<script type="text/javascript">
-    const serverAddress = "localhost";
-    const serverPort = 80;
-    const customerIdSet = new Set();
-
-    function socket(token) {
-        //Determine whether the current browser supports WebSocket
-        if ('WebSocket' in window) {
-            var ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/service/" + token);
-            var waiting = null;
-            //Connect failed callback
-            ws.onerror = function () {
-                //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
-            };
-            //Connect succeed callback
-            ws.onopen = function () {
-                //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
-            }
-            //Receive message callback
-            ws.onmessage = function (event) {
-                let json = JSON.parse(event.data);
-                if (waiting == null) {
-                    waiting = json.customerInQueue;
-                }
-                let chatareaObject = $("#" + json.customerId).children(".chatarea");
-                switch (json.type) {
-                    case "MESSAGE":
-                        chatareaObject.append('<p class="text-left"><small class="bg-light">'+getTime()+'</small><br>' + json.message + '</p>');
-                        break;
-                    case "FORWARD":
-                        if (waiting != 0) {
-                            $("#waiting").text(--waiting);
-                        }
-                        break;
-                    case "START_SERVICE":
-                        let customerId = json.customerId;
-                        customerIdSet.add(customerId);
-                        $(".list-group").append('<a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#'+json.customerId+'" role="tab">Customer '+customerIdSet.size+'<span class="badge badge-danger badge-pill">NEW</span></a>');
-                        $("#nav-tabContent").append('<div class="tab-pane fade" id="' + customerId + '" role="tabpanel">\n' +
-                            '                    <div id="chatarea_"' + customerId + '" class="border rounded border-secondary bg-white p-2 chatarea"\n' +
-                            '                         style="word-wrap: break-word;overflow-y: auto;">\n' +
-                            '                    </div>\n' +
-                            '                    <div class="input-group mb-3 bg-white">\n' +
-                            '                        <input id="message_'+customerId+'" autofocus="autofocus" class="form-control message" maxlength="30"\n' +
-                            '                               placeholder="Say something(within 30 chars)"\n' +
-                            '                               type="text">\n' +
-                            '                        <div class="input-group-append">\n' +
-                            '                            <button id="send_'+customerId+'" class="btn btn-outline-primary send" type="button">Send</button>\n' +
-                            '                        </div>\n' +
-                            '                    </div>\n' +
-                            '                </div>');
-                        chatareaObject.append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>');
-                        resize();
-                        if (waiting != 0) {
-                            $("#waiting").text(--waiting);
-                        }
-                        break;
-                    case "WAIT_SERVICE":
-                        $("#waiting").text(++waiting);
-                        break;
-                }
-                let scrollHeight = chatareaObject.prop('scrollHeight');
-                chatareaObject.scrollTop(scrollHeight);
-            }
-            //Connect closed callback
-            ws.onclose = function () {
-                //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
-            }
-            //Close the websocket connection when the window is closed, preventing throwing exceptions.
-            window.onbeforeunload = function () {
-                ws.close();
-            }
-            //Send message
-            $('.send').click(function () {
-                alert($(this).attr("id"))
-                let customerId = ($(this).attr("id").split("_"))[1];
-                // alert(customerId)
-                let message = $(this).parent().prev(".message");
-                if (message != '') {
-                    let msg = {"customerId": customerId, "message": message.val()};
-                    ws.send(JSON.stringify(msg));
-                    $("#" + customerId).children('.chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
-                    message.val('').focus();
-                }
-                var scrollHeight = $('.chatarea').prop('scrollHeight');
-                $('.chatarea').scrollTop(scrollHeight);
-            });
-        } else {
-            alert('Your browser does not support WebSocket. Please change your browser and try again.');
-        }
-    }
-
-    $(function () {
-        $("#login-form").trigger("click");
-        $("#login").click(function () {
-            var email = $("#email").val();
-            var password = $("#password").val();
-            $.ajax({
-                url: "/service/login",
-                data: {"username": email, "password": password},
-                type: "post",
-                success: function (token) {
-                    if (token != "") {
-                        socket(token);
-                        $(".close").trigger("click");
-                    }
-                }
-            });
-        });
-    });
-</script>
+<script src="js/service.js"></script>
 </html>

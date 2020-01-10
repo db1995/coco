@@ -32,15 +32,16 @@ public abstract class AbstractConnection {
     /**
      * Invoke when connection closed
      */
-    protected abstract void onClose() throws IOException;
+    protected abstract void onClose() throws IOException, EncodeException;
 
     /**
      * Invoke when connection closed
      */
-    protected abstract void onError(Throwable error, Session session) throws IOException;
+    protected abstract void onError(Throwable error, Session session) throws IOException, EncodeException;
 
     /**
      * Send message to the session of this connection
+     *
      * @param message The message you want to push
      * @throws IOException
      */
@@ -50,8 +51,9 @@ public abstract class AbstractConnection {
 
     /**
      * Notify some targets
+     *
      * @param jsonMessage
-     * @param targets The clients you want to notify
+     * @param targets     The clients you want to notify
      */
     protected void notifyClients(String jsonMessage, Collection<? extends AbstractConnection>... targets) {
         for (Collection<? extends AbstractConnection> collection : targets) {
@@ -63,5 +65,9 @@ public abstract class AbstractConnection {
                 }
             });
         }
+    }
+
+    public long getCreateTime() {
+        return createTime;
     }
 }
