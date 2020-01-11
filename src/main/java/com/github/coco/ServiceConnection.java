@@ -84,7 +84,7 @@ public class ServiceConnection extends AbstractConnection {
         String cid = (String) jsonObject.get("customerId");
         String msg = (String) jsonObject.get("message");
         this.customerConnectionMap.get(cid)
-                .session.getBasicRemote().sendObject(new CustomerResponseData(Type.MESSAGE, msg));
+                .session.getBasicRemote().sendObject(new CustomerResponseData(Type.MESSAGE, serviceName, msg));
     }
 
     @OnClose

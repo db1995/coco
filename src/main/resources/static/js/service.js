@@ -1,5 +1,5 @@
 const serverAddress = "localhost";
-const serverPort = 80;
+const serverPort = 8080;
 const customerIdSet = new Set();
 
 function socket(token) {
@@ -71,6 +71,18 @@ function socket(token) {
                         $("[href='#"+customerId+"']").children(".badge")
                             .removeClass("badge-danger").addClass("badge-warning").text("");
                     });
+                    $(".tab-pane").on("click", ".send", function () {
+                        let customerId = ($(this).attr("id").split("_"))[1];
+                        let messageObj = $(this).parent().prev(".message");
+                        if (messageObj.val() !== '') {
+                            let msg = {"customerId": customerId, "message": messageObj.val()};
+                            ws.send(JSON.stringify(msg));
+                            $("#" + customerId).children('.chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + messageObj.val() + '</p>');
+                        }
+                        messageObj.val('').focus();
+                        let scrollHeight = $('.chatarea').prop('scrollHeight');
+                        $('.chatarea').scrollTop(scrollHeight);
+                    });
                     break;
                 case "WAIT_SERVICE":
                     $("#waiting").text(++waiting);
@@ -99,7 +111,7 @@ function socket(token) {
                 $("#" + customerId).children('.chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
                 message.val('').focus();
             }
-            var scrollHeight = $('.chatarea').prop('scrollHeight');
+            let scrollHeight = $('.chatarea').prop('scrollHeight');
             $('.chatarea').scrollTop(scrollHeight);
         });
     } else {

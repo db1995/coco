@@ -38,13 +38,13 @@ public class CustomerConnection extends AbstractConnection {
         CUSTOMER_MAP.put(this.id, this);
 
         if (SERVICE_QUEUE.size() > 0) { // 如果有空闲的客服
-            ServiceConnection serviceConnection = SERVICE_QUEUE.element();
-            this.serviceConnection = serviceConnection;
-            serviceConnection.getCustomerConnectionMap().put(id, this);
-            if (serviceConnection.getCustomerConnectionMap().size() == getMaxCustomerPerService()) {
+            ServiceConnection sc = SERVICE_QUEUE.element();
+            this.serviceConnection = sc;
+            sc.getCustomerConnectionMap().put(this.id, this);
+            if (sc.getCustomerConnectionMap().size() == getMaxCustomerPerService()) {
                 SERVICE_QUEUE.poll();
             }
-            this.session.getBasicRemote().sendObject(new CustomerResponseData(Type.START_SERVICE, serviceConnection.getServiceName(), getWelcome()));
+            this.session.getBasicRemote().sendObject(new CustomerResponseData(Type.START_SERVICE, isAlwaysDisplayUnifiedServiceName() ? getUnifiedServiceName() : sc.getServiceName(), getWelcome()));
             this.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.START_SERVICE));
         } else if (SERVICE_MAP.size() == 0) {  // 没有客服在上班
             CUSTOMER_QUEUE.add(this);
@@ -68,7 +68,9 @@ public class CustomerConnection extends AbstractConnection {
     @OnMessage
     @Override
     public void onMessage(Session session, String message) throws IOException, EncodeException {
-        this.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.MESSAGE, message));
+        if (this.serviceConnection != null) {
+            this.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.MESSAGE, message));
+        }
     }
 
     @OnClose

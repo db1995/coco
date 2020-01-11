@@ -1,5 +1,5 @@
 const serverAddress = "localhost";
-const serverPort = 80;
+const serverPort = 8080;
 let id = "unknown";
 
 function socket() {
@@ -65,7 +65,7 @@ function socket() {
             var message = $('#message').val();
             if (message != '') {
                 ws.send(message);
-                $('#chatarea').append('<p class="text-right"><span class="bg-light" ">' + getTime() + '</span><br>' + message + '</p>');
+                $('#chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
                 $('#message').val('').focus();
             }
             var scrollHeight = $('#chatarea').prop('scrollHeight');
