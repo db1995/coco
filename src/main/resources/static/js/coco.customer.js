@@ -1,12 +1,12 @@
 const serverAddress = "localhost";
 const serverPort = 8080;
-let id = "unknown";
+let id = "";
 
 function socket() {
     //Determine whether the current browser supports WebSocket
     if ('WebSocket' in window) {
-        var ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/customer/" + id);
-        var before = null;
+        const ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/customer/" + id);
+        let before = null;
         //Connect failed callback
         ws.onerror = function () {
             $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
@@ -17,7 +17,7 @@ function socket() {
         }
         //Receive message callback
         ws.onmessage = function (event) {
-            var json = JSON.parse(event.data);
+            let json = JSON.parse(event.data);
             /*if (json.message != null) {
                 alert(json.message)
             }*/
@@ -48,7 +48,7 @@ function socket() {
                 case "SERVICE_DOWN":
                     alert("客服已掉线");
             }
-            var scrollHeight = $('#chatarea').prop('scrollHeight');
+            let scrollHeight = $('#chatarea').prop('scrollHeight');
             $('#chatarea').scrollTop(scrollHeight);
         }
         //Connect closed callback
@@ -62,14 +62,20 @@ function socket() {
         }
         //Send message
         $('#send').click(function () {
-            var message = $('#message').val();
+            let message = $('#message').val();
             if (message != '') {
                 ws.send(message);
                 $('#chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
                 $('#message').val('').focus();
             }
-            var scrollHeight = $('#chatarea').prop('scrollHeight');
+            let scrollHeight = $('#chatarea').prop('scrollHeight');
             $('#chatarea').scrollTop(scrollHeight);
+        });
+        // Press enter to send message
+        $('#message').bind('keyup', function(event) {
+            if (event.keyCode == "13") {
+                $('#send').trigger('click');
+            }
         });
     } else {
         alert('Your browser does not support WebSocket. Please change your browser and try again.');
@@ -82,7 +88,7 @@ $(function () {
         type: "get",
         success: function (result) {
             id = result;
-            socket();
+            socket(id);
         }
     });
 });

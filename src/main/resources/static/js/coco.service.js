@@ -83,6 +83,12 @@ function socket(token) {
                         let scrollHeight = $('.chatarea').prop('scrollHeight');
                         $('.chatarea').scrollTop(scrollHeight);
                     });
+                    // Press enter to send message
+                    $('#message_'+customerId).bind('keyup', function(event) {
+                        if (event.keyCode == "13") {
+                            $('#send_'+customerId).trigger('click');
+                        }
+                    });
                     break;
                 case "WAIT_SERVICE":
                     $("#waiting").text(++waiting);
@@ -101,7 +107,6 @@ function socket(token) {
         }
         //Send message
         $('.send').click(function () {
-            alert($(this).attr("id"))
             let customerId = ($(this).attr("id").split("_"))[1];
             // alert(customerId)
             let message = $(this).parent().prev(".message");

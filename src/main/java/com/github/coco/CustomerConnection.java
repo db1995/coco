@@ -12,7 +12,6 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.UUID;
 
 import static com.github.coco.GlobalState.*;
 import static com.github.coco.config.GlobalConfig.*;
@@ -32,7 +31,7 @@ public class CustomerConnection extends AbstractConnection {
     @Override
     public synchronized void onOpen(Session session, @PathParam("id") String id) throws IOException, EncodeException {
         // Initial
-        this.id = UUID.randomUUID().toString();
+        this.id = id;
         this.session = session;
         session.setMaxIdleTimeout(600000);
         CUSTOMER_MAP.put(this.id, this);
