@@ -140,8 +140,11 @@ public class CustomerConnection extends AbstractConnection {
                     sc.getCustomerConnectionMap().put(this.id, this);
                     startService(connection, sc);
                 }
+            } else {
+                SERVICE_QUEUE.add(this.serviceConnection);
             }
         }
+        this.serviceConnection.getCustomerConnectionMap().remove(id);
         CUSTOMER_MAP.remove(id);
         try {
             session.close();
