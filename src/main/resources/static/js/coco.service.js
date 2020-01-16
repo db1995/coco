@@ -70,6 +70,7 @@ function socket(token) {
                         $("#"+customerId).addClass("active");
                         $("[href='#"+customerId+"']").children(".badge")
                             .removeClass("badge-danger").addClass("badge-warning").text("");
+                        $("#message_"+customerId).focus();
                     });
                     $(".tab-pane").on("click", ".send", function () {
                         let customerId = ($(this).attr("id").split("_"))[1];
