@@ -94,6 +94,19 @@ function socket(token) {
                 case "WAIT_SERVICE":
                     $("#waiting").text(++waiting);
                     break;
+                case "CUSTOMER_LEFT":
+                    $('#chatarea_'+customerId).append('<div class="card text-center">\n' +
+                        '  <div class="card-body">\n' +
+                        '    <h5 class="card-title">Customer has left</h5>\n' +
+                        '    <p class="card-text">The service time: 12m</p>\n' +
+                        '    <a id="close_'+ customerId +'" href="#" class="btn btn-warning">Close dialog</a>\n' +
+                        '  </div>\n' +
+                        '</div>');
+                    $('#nav-tabContent').on('click', '#close_'+customerId, function () {
+                        $("[href='#statistics']").trigger('click');
+                        $("[href='#"+customerId+"'], #chatarea_"+customerId).remove();
+                    });
+                    break;
             }
             let scrollHeight = chatareaObject.prop('scrollHeight');
             chatareaObject.scrollTop(scrollHeight);
