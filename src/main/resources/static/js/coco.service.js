@@ -102,6 +102,7 @@ function socket(token) {
                         '    <a id="close_'+ customerId +'" href="#" class="btn btn-warning">Close dialog</a>\n' +
                         '  </div>\n' +
                         '</div>');
+                    $("[href='#"+customerId+"']").addClass("bg-secondary").css("border-color", "#ffffff");
                     $('#nav-tabContent').on('click', '#close_'+customerId, function () {
                         $("[href='#statistics']").trigger('click');
                         $("[href='#"+customerId+"'], #chatarea_"+customerId).remove();
