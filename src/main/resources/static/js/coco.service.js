@@ -105,7 +105,7 @@ function socket(token) {
                     $("[href='#"+customerId+"']").addClass("bg-secondary").css("border-color", "#ffffff");
                     $('#nav-tabContent').on('click', '#close_'+customerId, function () {
                         $("[href='#statistics']").trigger('click');
-                        $("[href='#"+customerId+"'], #chatarea_"+customerId).remove();
+                        $("[href='#"+customerId+"'], #chatarea_"+customerId+", #"+customerId).remove();
                     });
                     break;
             }
