@@ -134,12 +134,9 @@ public class CustomerConnection extends AbstractConnection {
             // 让客服接入新的客户
             if (CUSTOMER_QUEUE.size() > 0) {
                 CustomerConnection connection = CUSTOMER_QUEUE.poll();
-                ServiceConnection sc = connection.serviceConnection;
-                if (sc != null) {
-                    connection.serviceConnection = sc;
-                    sc.getCustomerConnectionMap().put(this.id, this);
-                    startService(connection, sc);
-                }
+                connection.serviceConnection = this.serviceConnection;
+                connection.serviceConnection.getCustomerConnectionMap().put(connection.id, connection);
+                startService(connection, connection.serviceConnection);
             } else {
                 SERVICE_QUEUE.add(this.serviceConnection);
             }
@@ -154,8 +151,8 @@ public class CustomerConnection extends AbstractConnection {
     }
 
     private void startService(CustomerConnection cc, ServiceConnection sc) throws IOException, EncodeException {
-        sc.session.getBasicRemote().sendObject(new CustomerResponseData(Type.START_SERVICE, serviceConnection.getServiceName(), getWelcome()));
-        cc.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.START_SERVICE));
+        cc.session.getBasicRemote().sendObject(new CustomerResponseData(Type.START_SERVICE, serviceConnection.getServiceName(), getWelcome()));
+        sc.session.getBasicRemote().sendObject(new ServiceResponseData(cc.id, Type.START_SERVICE));
     }
 
     public void setServiceConnection(ServiceConnection serviceConnection) {
