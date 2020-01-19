@@ -9,12 +9,12 @@ function socket() {
         let before = null;
         //Connect failed callback
         ws.onerror = function () {
-            $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
+            $('#coco-dialog').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
         };
         //Connect succeed callback
         ws.onopen = function () {
-            $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
-        }
+            $('#coco-dialog').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
+        };
         //Receive message callback
         ws.onmessage = function (event) {
             let json = JSON.parse(event.data);
@@ -24,58 +24,62 @@ function socket() {
             if (before == null) {
                 before = json.customerInQueue;
             }
+            let dialog = $('#coco-dialog');
+            let waitingBeforeYouObj = $("#waitingBeforeYouObj");
             switch (json.type) {
                 case "MESSAGE":
-                    $('#chatarea').append('<p class="text-left"><small class="bg-light">'
+                    dialog.append('<p class="text-left"><small class="bg-light">'
                         + json.serviceName + '&nbsp;' + getTime() + '</small><br>'
                         + json.message + '</p>');
                     break;
                 case "FORWARD":
-                    if (before != 0) {
-                        $("#waitingBeforeYou").text(--before);
+                    if (before !== 0) {
+                        waitingBeforeYouObj.text(--before);
                     }
                     break;
                 case "START_SERVICE":
-                    $('#chatarea').append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>')
+                    dialog.append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>')
                         .append('<p><small class="bg-light">' + json.serviceName + '&nbsp;' + getTime() + '</small><br>'
                             + json.message + '</p>');
                     before = 0;
-                    $("#waitingBeforeYou").text(0);
+                    waitingBeforeYouObj.text(0);
                     break;
                 case "WAIT_SERVICE":
-                    $("#waitingBeforeYou").text(json.customerInQueue);
+                    waitingBeforeYouObj.text(json.customerInQueue);
                     break;
                 case "SERVICE_DOWN":
-                    $('#chatarea').append('<p class="text-center"><span class="bg-light">' + json.message + '</span></p>');
+                    dialog.append('<p class="text-center"><span class="bg-light">' + json.message + '</span></p>');
                     ws.close();
                     break;
             }
-            let scrollHeight = $('#chatarea').prop('scrollHeight');
-            $('#chatarea').scrollTop(scrollHeight);
-        }
+            let scrollHeight = dialog.prop('scrollHeight');
+            dialog.scrollTop(scrollHeight);
+        };
         //Connect closed callback
         ws.onclose = function () {
-            $('#chatarea').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
-        }
+            $('#coco-dialog').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
+        };
         //Close the websocket connection when the window is closed, preventing throwing exceptions.
         window.onbeforeunload = function () {
             ws.close();
             console.log("close...")
-        }
+        };
         //Send message
         $('#send').click(function () {
-            let message = $('#message').val();
-            if (message != '') {
-                ws.send(message);
-                $('#chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
-                $('#message').val('').focus();
+            let messageObj = $('#message');
+            let messageVal = messageObj.val();
+            let dialog = $('#coco-dialog');
+            if (messageVal !== '') {
+                ws.send(messageVal);
+                dialog.append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + messageVal + '</p>');
+                messageObj.val('').focus();
             }
-            let scrollHeight = $('#chatarea').prop('scrollHeight');
-            $('#chatarea').scrollTop(scrollHeight);
+            let scrollHeight = dialog.prop('scrollHeight');
+            dialog.scrollTop(scrollHeight);
         });
         // Press enter to send message
         $('#message').bind('keyup', function (event) {
-            if (event.keyCode == "13") {
+            if (event.keyCode === 13) {
                 $('#send').trigger('click');
             }
         });

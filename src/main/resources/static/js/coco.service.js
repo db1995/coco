@@ -7,31 +7,33 @@ function socket(token) {
     if ('WebSocket' in window) {
         loadStatistics();
         const ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/service/" + token);
-        let waiting = null;
+        let waitingNum = null;
         //Connect failed callback
         ws.onerror = function () {
-            //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
+            //$('.coco-dialog').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
         };
         //Connect succeed callback
         ws.onopen = function () {
-            //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
-        }
+            //$('.coco-dialog').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
+        };
         //Receive message callback
         ws.onmessage = function (event) {
             let json = JSON.parse(event.data);
-            if (waiting == null) {
-                waiting = json.customerInQueue;
+            if (waitingNum == null) {
+                waitingNum = json.customerInQueue;
             }
-            let chatareaObject = $("#" + json.customerId).children(".chatarea");
+            let cocoDialogObject = $("#" + json.customerId).children(".coco-dialog");
             let customerId = json.customerId;
+            let hrefCustomerId = $("[href='#" + customerId + "']");
+            let waitingNumObj = $("#waitingNum");
             switch (json.type) {
                 case "MESSAGE":
-                    chatareaObject.append('<p class="text-left"><small class="bg-light">' + getTime() + '</small><br>' + json.message + '</p>');
-                    const e = $("[href='#" + customerId + "']").children(".badge");
-                    if (e.hasClass("badge-danger") || $("[href='#" + customerId + "']").hasClass("active")) {
+                    cocoDialogObject.append('<p class="text-left"><small class="bg-light">' + getTime() + '</small><br>' + json.message + '</p>');
+                    const e = hrefCustomerId.children(".badge");
+                    if (e.hasClass("badge-danger") || hrefCustomerId.hasClass("active")) {
                         break;
                     }
-                    if (e.text() == "") {
+                    if (e.text() === "") {
                         e.text(1);
                     } else {
                         let num = parseInt(e.text());
@@ -39,15 +41,15 @@ function socket(token) {
                     }
                     break;
                 case "FORWARD":
-                    if (waiting != 0) {
-                        $("#waiting").text(--waiting);
+                    if (waitingNum !== 0) {
+                        waitingNumObj.text(--waitingNum);
                     }
                     break;
                 case "START_SERVICE":
                     customerIdSet.add(customerId);
                     $(".list-group").append('<a class="rounded-pill list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="list" href="#' + json.customerId + '" role="tab">CUST ' + customerIdSet.size + '<span class="badge badge-danger badge-pill">NEW</span></a>');
                     const ch = '<div class="tab-pane" id="' + customerId + '" role="tabpanel">\n' +
-                        '                    <div id="chatarea_' + customerId + '" class="border rounded border-secondary bg-white p-2 chatarea"\n' +
+                        '                    <div id="coco-dialog_' + customerId + '" class="border rounded border-secondary bg-white p-2 coco-dialog"\n' +
                         '                         style="word-wrap: break-word;overflow-y: auto;">\n' +
                         '                    </div>\n' +
                         '                    <div class="input-group mb-3 bg-white">\n' +
@@ -60,10 +62,10 @@ function socket(token) {
                         '                    </div>\n' +
                         '                </div>';
                     $("#nav-tabContent").append(ch);
-                    chatareaObject.append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>');
+                    cocoDialogObject.append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>');
                     resize();
-                    if (waiting != 0) {
-                        $("#waiting").text(--waiting);
+                    if (waitingNum !== 0) {
+                        waitingNumObj.text(--waitingNum);
                     }
                     $("#list-tab").on("click", "[href='#" + customerId + "']", function () {
                         $(".tab-pane").removeClass("active");
@@ -78,61 +80,65 @@ function socket(token) {
                         if (messageObj.val() !== '') {
                             let msg = {"customerId": customerId, "message": messageObj.val()};
                             ws.send(JSON.stringify(msg));
-                            $("#" + customerId).children('.chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + messageObj.val() + '</p>');
+                            $("#" + customerId).children('.coco-dialog').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + messageObj.val() + '</p>');
                         }
+                        let dialog = $('.coco-dialog');
                         messageObj.val('').focus();
-                        let scrollHeight = $('.chatarea').prop('scrollHeight');
-                        $('.chatarea').scrollTop(scrollHeight);
+                        let scrollHeight = dialog.prop('scrollHeight');
+                        dialog.scrollTop(scrollHeight);
                     });
                     // Press enter to send message
                     $('#message_' + customerId).bind('keyup', function (event) {
-                        if (event.keyCode == "13") {
+                        if (event.keyCode === 13) {
                             $('#send_' + customerId).trigger('click');
                         }
                     });
                     break;
                 case "WAIT_SERVICE":
-                    $("#waiting").text(++waiting);
+                    waitingNumObj.text(++waitingNum);
                     break;
                 case "CUSTOMER_LEFT":
-                    $('#chatarea_' + customerId).append('<div class="card text-center">\n' +
+                    $('#coco-dialog_' + customerId).append('<div class="card text-center">\n' +
                         '  <div class="card-body">\n' +
                         '    <h5 class="card-title">Customer has left</h5>\n' +
                         '    <p class="card-text">The service time: 12m</p>\n' +
                         '    <a id="close_' + customerId + '" href="#" class="btn btn-warning">Close dialog</a>\n' +
                         '  </div>\n' +
                         '</div>');
-                    $("[href='#" + customerId + "']").addClass("bg-secondary").css("border-color", "#ffffff");
+                    hrefCustomerId.addClass("bg-secondary").css("border-color", "#ffffff");
                     $('#nav-tabContent').on('click', '#close_' + customerId, function () {
                         $("[href='#statistics']").trigger('click');
-                        $("[href='#" + customerId + "'], #chatarea_" + customerId + ", #" + customerId).remove();
+                        $("[href='#" + customerId + "'], #coco-dialog_" + customerId + ", #" + customerId).remove();
                     });
                     break;
+                default:
+                    break;
             }
-            let scrollHeight = chatareaObject.prop('scrollHeight');
-            chatareaObject.scrollTop(scrollHeight);
-        }
+            let scrollHeight = cocoDialogObject.prop('scrollHeight');
+            cocoDialogObject.scrollTop(scrollHeight);
+        };
         //Connect closed callback
         ws.onclose = function () {
-            //$('.chatarea').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
-        }
+            //$('.coco-dialog').append('<p class="text-center"><span class="bg-light">Connection closed</span></p>');
+        };
         //Close the websocket connection when the window is closed, preventing throwing exceptions.
         window.onbeforeunload = function () {
             ws.close();
-        }
+        };
         //Send message
         $('.send').click(function () {
+            let dialog = $('.coco-dialog');
             let customerId = ($(this).attr("id").split("_"))[1];
             // alert(customerId)
             let message = $(this).parent().prev(".message");
-            if (message != '') {
+            if (message !== '') {
                 let msg = {"customerId": customerId, "message": message.val()};
                 ws.send(JSON.stringify(msg));
-                $("#" + customerId).children('.chatarea').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
+                $("#" + customerId).children('.coco-dialog').append('<p class="text-right"><small class="bg-light" ">' + getTime() + '</small><br>' + message + '</p>');
                 message.val('').focus();
             }
-            let scrollHeight = $('.chatarea').prop('scrollHeight');
-            $('.chatarea').scrollTop(scrollHeight);
+            let scrollHeight = dialog.prop('scrollHeight');
+            dialog.scrollTop(scrollHeight);
         });
     } else {
         alert('Your browser does not support WebSocket. Please change your browser and try again.');
@@ -147,7 +153,7 @@ $(function () {
             data: {"username": $("#email").val(), "password": $("#password").val()},
             type: "post",
             success: function (token) {
-                if (token != "") {
+                if (token !== "") {
                     socket(token);
                     $(".close").trigger("click");
                 }

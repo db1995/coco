@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.github</groupId>
     <artifactId>coco</artifactId>
-    <version>0.1.0-alpha</version>
+    <version>0.2.0-alpha</version>
     <name>coco</name>
     <description>Web online customer service</description>
 

@@ -1,7 +1,7 @@
 $(function () {
     window.onresize = function () {
-        $('.chatarea').css("height", window.innerHeight * 0.6);
-    }
+        $('.coco-dialog').css("height", window.innerHeight * 0.6);
+    };
     resize();
 });
 
@@ -14,5 +14,5 @@ function getTime() {
 }
 
 function resize() {
-    $('.chatarea').css("height", window.innerHeight * 0.6);
+    $('.coco-dialog').css("height", window.innerHeight * 0.6);
 }
