@@ -65,12 +65,12 @@ function socket(token) {
                     if (waiting != 0) {
                         $("#waiting").text(--waiting);
                     }
-                    $("#list-tab").on("click","[href='#"+customerId+"']",function(){
+                    $("#list-tab").on("click", "[href='#" + customerId + "']", function () {
                         $(".tab-pane").removeClass("active");
-                        $("#"+customerId).addClass("active");
-                        $("[href='#"+customerId+"']").children(".badge")
+                        $("#" + customerId).addClass("active");
+                        $("[href='#" + customerId + "']").children(".badge")
                             .removeClass("badge-danger").addClass("badge-warning").text("");
-                        $("#message_"+customerId).focus();
+                        $("#message_" + customerId).focus();
                     });
                     $(".tab-pane").on("click", ".send", function () {
                         let customerId = ($(this).attr("id").split("_"))[1];
@@ -85,9 +85,9 @@ function socket(token) {
                         $('.chatarea').scrollTop(scrollHeight);
                     });
                     // Press enter to send message
-                    $('#message_'+customerId).bind('keyup', function(event) {
+                    $('#message_' + customerId).bind('keyup', function (event) {
                         if (event.keyCode == "13") {
-                            $('#send_'+customerId).trigger('click');
+                            $('#send_' + customerId).trigger('click');
                         }
                     });
                     break;
@@ -95,17 +95,17 @@ function socket(token) {
                     $("#waiting").text(++waiting);
                     break;
                 case "CUSTOMER_LEFT":
-                    $('#chatarea_'+customerId).append('<div class="card text-center">\n' +
+                    $('#chatarea_' + customerId).append('<div class="card text-center">\n' +
                         '  <div class="card-body">\n' +
                         '    <h5 class="card-title">Customer has left</h5>\n' +
                         '    <p class="card-text">The service time: 12m</p>\n' +
-                        '    <a id="close_'+ customerId +'" href="#" class="btn btn-warning">Close dialog</a>\n' +
+                        '    <a id="close_' + customerId + '" href="#" class="btn btn-warning">Close dialog</a>\n' +
                         '  </div>\n' +
                         '</div>');
-                    $("[href='#"+customerId+"']").addClass("bg-secondary").css("border-color", "#ffffff");
-                    $('#nav-tabContent').on('click', '#close_'+customerId, function () {
+                    $("[href='#" + customerId + "']").addClass("bg-secondary").css("border-color", "#ffffff");
+                    $('#nav-tabContent').on('click', '#close_' + customerId, function () {
                         $("[href='#statistics']").trigger('click');
-                        $("[href='#"+customerId+"'], #chatarea_"+customerId+", #"+customerId).remove();
+                        $("[href='#" + customerId + "'], #chatarea_" + customerId + ", #" + customerId).remove();
                     });
                     break;
             }

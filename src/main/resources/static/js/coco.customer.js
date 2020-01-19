@@ -72,7 +72,7 @@ function socket() {
             $('#chatarea').scrollTop(scrollHeight);
         });
         // Press enter to send message
-        $('#message').bind('keyup', function(event) {
+        $('#message').bind('keyup', function (event) {
             if (event.keyCode == "13") {
                 $('#send').trigger('click');
             }

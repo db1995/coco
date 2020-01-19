@@ -17,9 +17,9 @@
                     <div class="row">
                         <div class="col-lg-4 pr-0">
                             <div class="list-group" id="list-tab" role="tablist">
-                                <a id="pill-statistics" style="border-color: #ffffff;"
-                                   class="rounded-pill list-group-item list-group-item-action active text-center"
-                                   data-toggle="list" href="#statistics" role="tab">Statistics</a>
+                                <a class="rounded-pill list-group-item list-group-item-action active text-center" data-toggle="list"
+                                   href="#statistics"
+                                   id="pill-statistics" role="tab" style="border-color: #ffffff;">Statistics</a>
                             </div>
                         </div>
                         <div class="col-lg-8 pl-0">
@@ -53,17 +53,17 @@
         <div class="col-lg-3"></div>
     </div>
 </div>
-<button id="login-form" style="display: none;" type="button" class="btn btn-primary" data-toggle="modal"
-        data-target="#exampleModalCenter">
+<button class="btn btn-primary" data-target="#exampleModalCenter" data-toggle="modal" id="login-form" style="display: none;"
+        type="button">
     Launch demo modal
 </button>
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-     aria-hidden="true">
+<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="exampleModalCenter" role="dialog"
+     tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalCenterTitle">Service Login</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -71,16 +71,16 @@
                 <form>
                     <div class="form-group">
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
-                               placeholder="Enter email">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                        <input aria-describedby="emailHelp" class="form-control" id="email" placeholder="Enter email"
+                               type="email">
+                        <small class="form-text text-muted" id="emailHelp">We'll never share your email with anyone
                             else.</small>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password">
+                        <input class="form-control" id="password" placeholder="Password" type="password">
                     </div>
-                    <button id="login" type="button" class="btn btn-primary btn-block">Login</button>
+                    <button class="btn btn-primary btn-block" id="login" type="button">Login</button>
                 </form>
             </div>
         </div>
