@@ -32,5 +32,9 @@ Build web online customer service system easily and quickly.
 
 ****
 
-![Coco Service](https://github.com/db1995/images/blob/master/coco_service.png)
-![Coco Service](https://github.com/db1995/images/blob/master/coco_service_1.png)
+![coco-overview](https://github.com/db1995/images/blob/master/coco-overview.png)
+![coco-statistics](https://github.com/db1995/images/blob/master/coco-statistics.png)
+![coco-dialog-service](https://github.com/db1995/images/blob/master/coco-dialog-service.png)
+![coco-dialog-customer](https://github.com/db1995/images/blob/master/coco-dialog-customer.png)
+![coco-before-1](https://github.com/db1995/images/blob/master/coco-before-1.png)
+![coco-before-2](https://github.com/db1995/images/blob/master/coco-before-2.png)
