@@ -46,7 +46,9 @@ function socket() {
                     $("#waitingBeforeYou").text(json.customerInQueue);
                     break;
                 case "SERVICE_DOWN":
-                    alert("客服已掉线");
+                    $('#chatarea').append('<p class="text-center"><span class="bg-light">' + json.message + '</span></p>');
+                    ws.close();
+                    break;
             }
             let scrollHeight = $('#chatarea').prop('scrollHeight');
             $('#chatarea').scrollTop(scrollHeight);

@@ -29,6 +29,7 @@ public abstract class AbstractResponseData {
         MESSAGE,
         WAIT_SERVICE,
         START_SERVICE,
-        CUSTOMER_LEFT
+        CUSTOMER_LEFT,
+        SERVICE_DOWN
     }
 }

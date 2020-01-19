@@ -2,6 +2,8 @@ package com.github.coco;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.coco.config.GlobalConfig;
+import com.github.coco.pojo.AbstractResponseData;
 import com.github.coco.pojo.CustomerResponseData;
 import com.github.coco.pojo.ServiceResponseData;
 import com.github.coco.util.JSONEncoder;
@@ -89,39 +91,35 @@ public class ServiceConnection extends AbstractConnection {
 
     @OnClose
     @Override
-    public void onClose() {
-
+    public void onClose() throws IOException {
+        handleCloseAndError();
     }
 
     @OnError
     @Override
-    public void onError(Throwable error, Session session) {
+    public void onError(Throwable error, Session session) throws IOException {
         error.printStackTrace();
         if (error instanceof EOFException) {
 
         } else {
-            dealCloseAndError(session);
+            handleCloseAndError();
         }
     }
 
-    private void dealCloseAndError(Session session) {
-        /*String sessionId = session.getId();
+    private void handleCloseAndError() throws IOException {
         // 告知所有正在服务的客户，客服已掉线
-        SERVICE_MAP.get(sessionId).getCustomerSet().forEach(c -> {
-            AbstractResponseData rd = new CustomerResponseData(Type.SERVICE_DOWN);
+        this.customerConnectionMap.forEach((id, cc) -> {
+            AbstractResponseData rd = new CustomerResponseData(Type.SERVICE_DOWN, GlobalConfig.getServiceDown());
             try {
-                c.getSession().getBasicRemote().sendText(JSON.toJSONString(rd));
+                cc.session.getBasicRemote().sendObject(rd);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (EncodeException e) {
                 e.printStackTrace();
             }
         });
-        SERVICE_MAP.remove(sessionId);
-        SERVICE_QUEUE.remove(SERVICE_MAP.get(sessionId));
-        try {
-            session.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        SERVICE_MAP.remove(this.id);
+        this.session.close();
     }
 
     public Map<String, CustomerConnection> getCustomerConnectionMap() {

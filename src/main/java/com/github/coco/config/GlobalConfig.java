@@ -17,6 +17,7 @@ public final class GlobalConfig {
     private static String autoReplyAfterWork = "";
     private static String unifiedServiceName = "";
     private static boolean alwaysDisplayUnifiedServiceName = true;
+    private static String serviceDown = "";
 
     public static int getMaxCustomerPerService() {
         return maxCustomerPerService;
@@ -56,5 +57,13 @@ public final class GlobalConfig {
 
     public void setAlwaysDisplayUnifiedServiceName(boolean alwaysDisplayUnifiedServiceName) {
         GlobalConfig.alwaysDisplayUnifiedServiceName = alwaysDisplayUnifiedServiceName;
+    }
+
+    public static String getServiceDown() {
+        return serviceDown;
+    }
+
+    public void setServiceDown(String serviceDown) {
+        GlobalConfig.serviceDown = serviceDown;
     }
 }

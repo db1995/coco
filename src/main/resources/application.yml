@@ -4,3 +4,4 @@ coco:
   auto-reply-after-work: Sorry, we are all off, you can leave your questions and we will respond to you.
   unified-service-name: Great Company
   always-display-unified-service-name: true
+  service-down: Sorry, the service network is abnormal and disconnected
