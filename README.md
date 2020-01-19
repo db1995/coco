@@ -4,31 +4,37 @@
 
 > *English intro:*
 
-### Tips:
+## Tips
 The project is still under development, you can view the [Projects](https://github.com/db1995/coco/projects) for details.  
 If you have any suggestions, please submit an [Issue](https://github.com/db1995/coco/issues).
 
-### Purpose:
+## Purpose
 Build web online customer service system easily and quickly.
 
-### Features:
+## Features
 * Rich functionality
 * Highly flexible
+
+## Quickstart
+See [Quickstart] for details in Wiki.
 
 ****
 
 > *中文简介：*
 
-### 提示：
+## 提示
 该项目仍在开发中，你可以查看[Projects](https://github.com/db1995/coco/projects)以了解详细信息。  
 如果你有任何建议，请提交[Issue](https://github.com/db1995/coco/issues)。
 
-### 宗旨：
+## 宗旨
 便捷快速地构建网页在线客服系统。
 
-### 特性：
+## 特性
 * 丰富的功能
 * 高度灵活
+
+### 快速开始
+在Wiki中查看[快速开始](https://github.com/db1995/coco/wiki/主页)。
 
 ****
 
