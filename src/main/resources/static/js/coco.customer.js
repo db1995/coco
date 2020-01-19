@@ -25,7 +25,7 @@ function socket() {
                 before = json.customerInQueue;
             }
             let dialog = $('#coco-dialog');
-            let waitingBeforeYouObj = $("#waitingBeforeYouObj");
+            let waitingBeforeYouObj = $("#waitingBeforeYou");
             switch (json.type) {
                 case "MESSAGE":
                     dialog.append('<p class="text-left"><small class="bg-light">'

@@ -7,7 +7,7 @@ function socket(token) {
     if ('WebSocket' in window) {
         loadStatistics();
         const ws = new WebSocket("ws://" + serverAddress + ":" + serverPort + "/service/" + token);
-        let waitingNum = null;
+        let waiting = null;
         //Connect failed callback
         ws.onerror = function () {
             //$('.coco-dialog').append('<p class="text-center"><span class="bg-light">Connection error</span></p>');
@@ -19,13 +19,13 @@ function socket(token) {
         //Receive message callback
         ws.onmessage = function (event) {
             let json = JSON.parse(event.data);
-            if (waitingNum == null) {
-                waitingNum = json.customerInQueue;
+            if (waiting == null) {
+                waiting = json.customerInQueue;
             }
             let cocoDialogObject = $("#" + json.customerId).children(".coco-dialog");
             let customerId = json.customerId;
             let hrefCustomerId = $("[href='#" + customerId + "']");
-            let waitingNumObj = $("#waitingNum");
+            let waitingObj = $("#waiting");
             switch (json.type) {
                 case "MESSAGE":
                     cocoDialogObject.append('<p class="text-left"><small class="bg-light">' + getTime() + '</small><br>' + json.message + '</p>');
@@ -41,8 +41,8 @@ function socket(token) {
                     }
                     break;
                 case "FORWARD":
-                    if (waitingNum !== 0) {
-                        waitingNumObj.text(--waitingNum);
+                    if (waiting !== 0) {
+                        waitingObj.text(--waiting);
                     }
                     break;
                 case "START_SERVICE":
@@ -64,8 +64,8 @@ function socket(token) {
                     $("#nav-tabContent").append(ch);
                     cocoDialogObject.append('<p class="text-center"><span class="bg-light">' + 'Connected service' + '</span></p>');
                     resize();
-                    if (waitingNum !== 0) {
-                        waitingNumObj.text(--waitingNum);
+                    if (waiting !== 0) {
+                        waitingObj.text(--waiting);
                     }
                     $("#list-tab").on("click", "[href='#" + customerId + "']", function () {
                         $(".tab-pane").removeClass("active");
@@ -95,7 +95,7 @@ function socket(token) {
                     });
                     break;
                 case "WAIT_SERVICE":
-                    waitingNumObj.text(++waitingNum);
+                    waitingObj.text(++waiting);
                     break;
                 case "CUSTOMER_LEFT":
                     $('#coco-dialog_' + customerId).append('<div class="card text-center">\n' +
