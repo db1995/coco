@@ -1,6 +1,17 @@
 const serverAddress = "localhost";
 const serverPort = 8080;
 let id = "";
+let closeTipTimeout;
+let closeTimeout;
+
+function handleTimeout(ws) {
+    closeTipTimeout = window.setTimeout(function () {
+        $('#coco-dialog').append('<p class="text-center"><span class="bg-light">Connection will be closed after 1 minute</span></p>');
+        closeTimeout = window.setTimeout(function () {
+            ws.close();
+        }, 120 * 1000);
+    }, 60 * 1000);
+}
 
 function socket() {
     //Determine whether the current browser supports WebSocket
@@ -14,6 +25,7 @@ function socket() {
         //Connect succeed callback
         ws.onopen = function () {
             $('#coco-dialog').append('<p class="text-center"><span class="bg-light">Connection succeeded</span></p>');
+            handleTimeout(ws);
         };
         //Receive message callback
         ws.onmessage = function (event) {
@@ -62,7 +74,6 @@ function socket() {
         //Close the websocket connection when the window is closed, preventing throwing exceptions.
         window.onbeforeunload = function () {
             ws.close();
-            console.log("close...")
         };
         //Send message
         $('#send').click(function () {
@@ -76,6 +87,9 @@ function socket() {
             }
             let scrollHeight = dialog.prop('scrollHeight');
             dialog.scrollTop(scrollHeight);
+            window.clearTimeout(closeTimeout);
+            window.clearTimeout(closeTipTimeout);
+            handleTimeout(ws);
         });
         // Press enter to send message
         $('#message').bind('keyup', function (event) {
