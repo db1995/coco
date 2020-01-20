@@ -123,7 +123,9 @@ public class CustomerConnection extends AbstractConnection {
                 }
             });
             // 提示客服使其了解到顾客已离开
-            cc.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.CUSTOMER_LEFT));
+            if (cc.serviceConnection.session.isOpen()) {
+                cc.serviceConnection.session.getBasicRemote().sendObject(new ServiceResponseData(this.id, Type.CUSTOMER_LEFT));
+            }
             SERVICE_MAP.forEach((k, s) -> {
                 try {
                     s.session.getBasicRemote().sendText(JSON.toJSONString(rd));
