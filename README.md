@@ -5,6 +5,7 @@
 > *English intro:*
 
 ## Tips
+The project is being refactored with Vue and Element(instead of Bootstrap).
 The project is still under development, you can view the [Projects](https://github.com/db1995/coco/projects) for details.  
 If you have any suggestions, please submit an [Issue](https://github.com/db1995/coco/issues).
 
@@ -23,6 +24,7 @@ See [Quickstart] for details in Wiki.
 > *中文简介：*
 
 ## 提示
+该项目正在用Vue和Element重构中（取代Bootstrap）。
 该项目仍在开发中，你可以查看[Projects](https://github.com/db1995/coco/projects)以了解详细信息。  
 如果你有任何建议，请提交[Issue](https://github.com/db1995/coco/issues)。
 
